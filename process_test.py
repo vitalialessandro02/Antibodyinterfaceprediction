@@ -6,8 +6,8 @@ from config import PROCESSED_DATA_DIR
 def process_test_set():
     """Processa il set di test usando dati remoti"""
     try:
-        # Carica i dati direttamente da FigShare
-        X_test, y_test = data_loader.load_features('test')
+        # Carica i dati direttamente da FigShare (senza coordinate)
+        X_test, y_test = data_loader.load_features('test', return_coords=False)
         
         # Salva i dati processati
         output_dir = os.path.join(PROCESSED_DATA_DIR, 'test')

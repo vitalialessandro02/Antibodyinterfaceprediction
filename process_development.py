@@ -1,4 +1,3 @@
-# process_development.py
 import numpy as np
 from remote_data import data_loader
 from config import PROCESSED_DATA_DIR
@@ -7,8 +6,8 @@ import os
 def process_development_set():
     """Processa il set di sviluppo usando dati in streaming"""
     try:
-        # Carica i dati direttamente dal web
-        X_dev, y_dev = data_loader.load_features('development')
+        # Carica i dati senza coordinate
+        X_dev, y_dev = data_loader.load_features('development', return_coords=False)
         
         # Salva solo i risultati processati
         output_dir = os.path.join(PROCESSED_DATA_DIR, 'dev')
