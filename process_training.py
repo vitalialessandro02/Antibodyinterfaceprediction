@@ -16,8 +16,7 @@ def process_training_set():
         np.save(os.path.join(output_dir, 'features.npy'), X_train)
         np.save(os.path.join(output_dir, 'labels.npy'), y_train)
         
-        print(f"Training set processato: {X_train.shape[0]} campioni, {X_train.shape[1]} features")
-        print(f"Dati salvati in: {output_dir}")
+        
         
     except Exception as e:
         print(f"Errore durante il processing: {str(e)}")

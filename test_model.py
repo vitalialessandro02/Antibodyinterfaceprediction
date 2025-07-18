@@ -25,7 +25,7 @@ def save_metrics(metrics, filename):
             f.write(f"{k}: {v:.4f}\n")
 
 def plot_curves(y_true, y_score, set_name):
-    """Crea e salva le curve ROC e PR"""
+    """Crea e salva le curve ROC, PR e le metriche al variare della soglia"""
     # ROC Curve
     fpr, tpr, _ = roc_curve(y_true, y_score)
     roc_auc = roc_auc_score(y_true, y_score)
@@ -51,6 +51,40 @@ def plot_curves(y_true, y_score, set_name):
     plt.title(f'PR Curve - {set_name}')
     plt.legend()
     plt.savefig(os.path.join(RESULTS_DIR, f'pr_{set_name}.png'))
+    plt.close()
+    
+    # Nuovi grafici per Accuracy e F1 Score al variare della soglia
+    thresholds = np.linspace(min(y_score), max(y_score), 100)
+    accuracies = []
+    f1_scores = []
+    
+    for thresh in thresholds:
+        y_pred = (y_score >= thresh).astype(int)
+        accuracies.append(accuracy_score(y_true, y_pred))
+        f1_scores.append(f1_score(y_true, y_pred))
+    
+    # Grafico Accuracy vs Threshold
+    plt.figure(figsize=(10, 8))
+    plt.plot(thresholds, accuracies, label='Accuracy', color='blue')
+    plt.axvline(x=OPTIMAL_THRESHOLD, color='red', linestyle='--', 
+                label=f'Optimal Threshold ({OPTIMAL_THRESHOLD:.3f})')
+    plt.xlabel('Threshold')
+    plt.ylabel('Accuracy')
+    plt.title(f'Accuracy vs Decision Threshold - {set_name}')
+    plt.legend()
+    plt.savefig(os.path.join(RESULTS_DIR, f'accuracy_vs_threshold_{set_name}.png'))
+    plt.close()
+    
+    # Grafico F1 Score vs Threshold
+    plt.figure(figsize=(10, 8))
+    plt.plot(thresholds, f1_scores, label='F1 Score', color='green')
+    plt.axvline(x=OPTIMAL_THRESHOLD, color='red', linestyle='--', 
+                label=f'Optimal Threshold ({OPTIMAL_THRESHOLD:.3f})')
+    plt.xlabel('Threshold')
+    plt.ylabel('F1 Score')
+    plt.title(f'F1 Score vs Decision Threshold - {set_name}')
+    plt.legend()
+    plt.savefig(os.path.join(RESULTS_DIR, f'f1_vs_threshold_{set_name}.png'))
     plt.close()
 
 def evaluate_model(model, X, y, set_name):

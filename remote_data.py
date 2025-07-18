@@ -23,26 +23,21 @@ class FigShareLoader:
     def _get_download_url(self, figshare_url):
         """Ottiene l'URL diretto di download da FigShare usando l'API"""
         try:
-            print(f"Ottenendo URL di download da: {figshare_url}")
-            
             # Estrai l'ID del file dall'URL
             file_id_match = re.search(r'file=(\d+)', figshare_url)
             if not file_id_match:
                 raise ValueError("Impossibile estrarre l'ID del file dall'URL")
             
             file_id = file_id_match.group(1)
-            print(f"ID del file: {file_id}")
-            
             # Costruisci l'URL diretto usando il servizio ndownloader di FigShare
             direct_url = f"https://ndownloader.figshare.com/files/{file_id}"
-            print(f"URL di download diretto: {direct_url}")
+           
             
             # Verifica che l'URL sia valido facendo una richiesta HEAD
             try:
                 head_response = self.session.head(direct_url, timeout=10)
                 head_response.raise_for_status()
-                print(f"URL verificato - Content-Type: {head_response.headers.get('Content-Type', 'Non specificato')}")
-                print(f"Content-Length: {head_response.headers.get('Content-Length', 'Non specificato')}")
+           
                 return direct_url
             except Exception as e:
                 print(f"Errore nella verifica dell'URL: {e}")
@@ -57,8 +52,6 @@ class FigShareLoader:
      for attempt in range(max_retries):
         try:
             download_url = self._get_download_url(url)
-            print(f"Tentativo {attempt + 1} di {max_retries} - Download da: {download_url}")
-            
             # Aumenta il timeout a 10 minuti (600 secondi)
             response = self.session.get(download_url, stream=True, timeout=600)
             response.raise_for_status()
@@ -111,11 +104,11 @@ class FigShareLoader:
     
     def _find_and_extract_file(self, tar, filename_pattern):
         """Trova ed estrae un file dal tar"""
-        print("File nell'archivio:")
+        
         file_found = None
         
         for member in tar.getmembers():
-            print(f"  - {member.name}")
+            
             if member.isfile() and filename_pattern in member.name:
                 file_found = member
                 break
@@ -123,7 +116,7 @@ class FigShareLoader:
         if file_found is None:
             raise FileNotFoundError(f"Nessun file corrisponde a '{filename_pattern}'")
         
-        print(f"Estrazione del file: {file_found.name}")
+        
         with tar.extractfile(file_found) as file_obj:
             content = file_obj.read()
             
@@ -141,7 +134,7 @@ class FigShareLoader:
    # remote_data.py (modifiche alla funzione _parse_features)
     def _parse_features(self, content, pdb_id=None):
      """Converte il contenuto del file in array numpy"""
-     print("Parsing dei dati...")
+  
      data = []
      lines_processed = 0
      lines_skipped = 0
@@ -183,14 +176,10 @@ class FigShareLoader:
                 print(f"Warning: Saltata linea {line_num} - {str(e)}")
             continue
     
-     print(f"Linee processate: {lines_processed}")
-     print(f"Linee saltate: {lines_skipped}")
-    
      if not data:
         raise ValueError("Nessun dato valido trovato nel file")
     
      data_array = np.array(data)
-     print(f"Dimensione dati: {data_array.shape}")
     
      # Verifica che ci siano entrambe le classi
      unique_labels = np.unique(data_array[:, 0])
@@ -205,7 +194,7 @@ class FigShareLoader:
      if dataset_type not in FIGSHARE_URLS:
         raise ValueError(f"Tipo dataset non valido. Scegli tra: {list(FIGSHARE_URLS.keys())}")
     
-     print(f"Accesso al dataset {dataset_type} da FigShare...")
+     
     
      try:
         # 1. Ottieni lo stream del file tar.gz
