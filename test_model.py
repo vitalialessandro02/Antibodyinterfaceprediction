@@ -14,7 +14,7 @@ import time
 
 from remote_data import data_loader
 
-# Configura lo stile dei grafici
+
 plt.style.use('seaborn-v0_8')
 sns.set_palette('colorblind')
 
@@ -53,7 +53,7 @@ def plot_curves(y_true, y_score, set_name):
     plt.savefig(os.path.join(RESULTS_DIR, f'pr_{set_name}.png'))
     plt.close()
     
-    # Nuovi grafici per Accuracy e F1 Score al variare della soglia
+  
     thresholds = np.linspace(min(y_score), max(y_score), 100)
     accuracies = []
     f1_scores = []
@@ -63,7 +63,7 @@ def plot_curves(y_true, y_score, set_name):
         accuracies.append(accuracy_score(y_true, y_pred))
         f1_scores.append(f1_score(y_true, y_pred))
     
-    # Grafico Accuracy vs Threshold
+    # Grafic for Accuracy vs Threshold
     plt.figure(figsize=(10, 8))
     plt.plot(thresholds, accuracies, label='Accuracy', color='blue')
     plt.axvline(x=OPTIMAL_THRESHOLD, color='red', linestyle='--', 
@@ -75,7 +75,7 @@ def plot_curves(y_true, y_score, set_name):
     plt.savefig(os.path.join(RESULTS_DIR, f'accuracy_vs_threshold_{set_name}.png'))
     plt.close()
     
-    # Grafico F1 Score vs Threshold
+    # Grafic for F1 Score vs Threshold
     plt.figure(figsize=(10, 8))
     plt.plot(thresholds, f1_scores, label='F1 Score', color='green')
     plt.axvline(x=OPTIMAL_THRESHOLD, color='red', linestyle='--', 
@@ -88,12 +88,12 @@ def plot_curves(y_true, y_score, set_name):
     plt.close()
 
 def evaluate_model(model, X, y, set_name):
-    """Valuta il modello e applica il post-processing"""
-    # Calcola le decisioni
+    """evaluate the  modello and  apply  post-processing"""
+    # Calcolate the decision
     y_score = model.decision_function(X)
     y_pred = (y_score >= OPTIMAL_THRESHOLD).astype(int)
     
-    # Metriche base
+    # base metrics
     metrics = {
         'ROC AUC': roc_auc_score(y, y_score),
         'PR AUC': average_precision_score(y, y_score),
@@ -103,11 +103,11 @@ def evaluate_model(model, X, y, set_name):
         'F1 Score': f1_score(y, y_pred)
     }
     
-    # Salva le curve
+    # Save the   curve
     plot_curves(y, y_score, set_name)
     save_metrics(metrics, f'metrics_{set_name}.txt')
     
-    print(f"\nPerformance sul {set_name} set:")
+    print(f"\nPerformance on  {set_name} set:")
     print("="*50)
     for name, value in metrics.items():
         print(f"- {name}: {value:.4f}")
@@ -115,39 +115,39 @@ def evaluate_model(model, X, y, set_name):
     return metrics
 
 def test_model():
-    """Testa il modello sui set di sviluppo e test"""
+    """Testing   modello on development and testing  set """
     try:
-        # Carica il modello
+        # Upload the method
         model_path = os.path.join(MODEL_DIR, 'trained_svm_model.joblib')
         if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Modello non trovato in {model_path}")
+            raise FileNotFoundError(f"Modello not found in {model_path}")
         
         svm = load(model_path)
         
-        # Valuta sul set di sviluppo (se disponibile)
+       
         try:
-            print("\nValutazione sul set di sviluppo...")
+            print("\nValutation of developmnet   set ...")
             X_dev, y_dev = data_loader.load_features('development')
             evaluate_model(svm, X_dev, y_dev, "development")
         except Exception as e:
-            print(f"\nAttenzione: impossibile valutare sul set di sviluppo: {e}")
+            print(f"\nWarning : impossibile evaluate on development set : {e}")
         
-        # Valuta sul set di test con più tentativi
+        # With more 3 attemps
         max_attempts = 3
         for attempt in range(max_attempts):
             try:
-                print(f"\nTentativo {attempt + 1} di {max_attempts} - Valutazione sul set di test...")
+                print(f"\nAttemps {attempt + 1} on {max_attempts} - Evaluete on test set...")
                 X_test, y_test = data_loader.load_features('test')
                 evaluate_model(svm, X_test, y_test, "test")
                 break
             except Exception as e:
                 if attempt == max_attempts - 1:
                     raise
-                print(f"Tentativo fallito: {e}\nRiprovo...")
+                print(f"Faulty attemps: {e}\nRitry...")
                 time.sleep(5 * (attempt + 1))
                 
     except Exception as e:
-        print(f"\nERRORE CRITICO durante il testing: {str(e)}")
+        print(f"\nCritic ERROR  during testing: {str(e)}")
         raise
 
 if __name__ == "__main__":

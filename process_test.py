@@ -6,10 +6,10 @@ from config import PROCESSED_DATA_DIR
 def process_test_set():
     """Processa il set di test usando dati remoti"""
     try:
-        # Carica i dati direttamente da FigShare (senza coordinate)
+        # Upload data from FigShare (senza coordinate)
         X_test, y_test = data_loader.load_features('test', return_coords=False)
         
-        # Salva i dati processati
+        # Save data 
         output_dir = os.path.join(PROCESSED_DATA_DIR, 'test')
         os.makedirs(output_dir, exist_ok=True)
         
@@ -19,7 +19,7 @@ def process_test_set():
         print(f"Test set processato: {X_test.shape[0]} campioni, {X_test.shape[1]} features")
         print(f"Dati salvati in: {output_dir}")
         
-        # Mostra la distribuzione delle etichette
+       
         unique, counts = np.unique(y_test, return_counts=True)
         print(f"Distribuzione etichette: {dict(zip(unique, counts))}")
         

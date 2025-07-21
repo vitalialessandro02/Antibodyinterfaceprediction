@@ -12,7 +12,7 @@ from config import (PROCESSED_DATA_DIR, MODEL_DIR, SVM_PARAMS, LOGGING,
 from remote_data import data_loader
 from zernike_descriptors import ProteinSurface, compute_3dzd, extract_patch
 
-# Configure logging
+
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('training')
 
@@ -85,16 +85,16 @@ class AntibodyDataset:
             logger.info(f"Positive class ratio: {counts[1]/sum(counts):.2%}")
 
 def train_model():
-    """Addestra il modello SVM come specificato nel paper"""
+    """Training   SVM  model """
     try:
-        # Carica e bilancia i dati
+        # Upload and balanced data 
         X_train, y_train = load_processed_data()
         
-        # Crea il modello SVM con i parametri del paper
-        logger.info("Creazione modello SVM con parametri dal paper")
+        # Create  SVM model with 
+        logger.info("Creation of SVM model")
         svm = SVC(**SVM_PARAMS)
         
-        # Cross-validazione stratificata (10-fold come nel paper)
+        # Cross-validazione stratificated  
         logger.info("Cross-validazione 10-fold...")
         cv = StratifiedKFold(n_splits=10, shuffle=True, random_state=42)
         cv_scores = cross_val_score(
@@ -106,17 +106,17 @@ def train_model():
         
         logger.info(f"ROC AUC medio: {np.mean(cv_scores):.4f} ± {np.std(cv_scores):.4f}")
         
-        # Addestramento finale su tutto il dataset
-        logger.info("Addestramento finale...")
+        # Final traing on full  il dataset
+        logger.info("Final Training ")
         start_time = time.time()
         svm.fit(X_train, y_train)
-        logger.info(f"Addestramento completato in {time.time() - start_time:.2f}s")
+        logger.info(f"Training  complete in {time.time() - start_time:.2f}s")
         
-        # Salva il modello
+        # Save model
         os.makedirs(MODEL_DIR, exist_ok=True)
         model_path = os.path.join(MODEL_DIR, 'trained_svm_model.joblib')
         dump(svm, model_path)
-        logger.info(f"Modello salvato in {model_path}")
+        logger.info(f"Model save  in {model_path}")
         
         return svm
         
@@ -124,14 +124,14 @@ def train_model():
         logger.error(f"Errore nell'addestramento: {str(e)}")
         raise
 def load_processed_data():
-    """Carica i dati processati dal disco"""
+    
     try:
         X_train = np.load(os.path.join(PROCESSED_DATA_DIR, 'train', 'features.npy'))
         y_train = np.load(os.path.join(PROCESSED_DATA_DIR, 'train', 'labels.npy'))
         
-        logger.info(f"Caricati {X_train.shape[0]} campioni con {X_train.shape[1]} features")
+        logger.info(f"Upload {X_train.shape[0]} samples with {X_train.shape[1]} features")
         
-        # Bilancia il dataset come nel paper (undersampling + oversampling)
+        # Bilancedc data  (undersampling + oversampling)
         mask_minority = y_train == 1
         X_minority = X_train[mask_minority]
         y_minority = y_train[mask_minority]
@@ -139,7 +139,7 @@ def load_processed_data():
         y_majority = y_train[~mask_minority]
         
         # Undersampling della classe maggioritaria
-        n_samples = min(len(X_majority), 2 * len(X_minority))  # rapporto 2:1 come nel paper
+        n_samples = min(len(X_majority), 2 * len(X_minority))  # rapport 2:1 
         X_majority_down, y_majority_down = resample(
             X_majority, y_majority,
             replace=False,
@@ -157,7 +157,7 @@ def load_processed_data():
         return X_train_balanced, y_train_balanced
         
     except Exception as e:
-        logger.error(f"Errore nel caricamento dei dati: {str(e)}")
+        logger.error(f"Error during data uploading: {str(e)}")
         raise
 if __name__ == "__main__":
     train_model()

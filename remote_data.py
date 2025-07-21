@@ -21,19 +21,19 @@ class FigShareLoader:
         })
     
     def _get_download_url(self, figshare_url):
-        """Ottiene l'URL diretto di download da FigShare usando l'API"""
+        """Obtain direct URL  download from FigShare using API"""
         try:
-            # Estrai l'ID del file dall'URL
+            
             file_id_match = re.search(r'file=(\d+)', figshare_url)
             if not file_id_match:
                 raise ValueError("Impossibile estrarre l'ID del file dall'URL")
             
             file_id = file_id_match.group(1)
-            # Costruisci l'URL diretto usando il servizio ndownloader di FigShare
+            
             direct_url = f"https://ndownloader.figshare.com/files/{file_id}"
            
             
-            # Verifica che l'URL sia valido facendo una richiesta HEAD
+            # Verifica that URL is valid
             try:
                 head_response = self.session.head(direct_url, timeout=10)
                 head_response.raise_for_status()
@@ -41,22 +41,22 @@ class FigShareLoader:
                 return direct_url
             except Exception as e:
                 print(f"Errore nella verifica dell'URL: {e}")
-                # Se la verifica fallisce, prova comunque l'URL
+                
                 return direct_url
             
         except Exception as e:
             raise RuntimeError(f"Errore nell'ottenere l'URL di download: {str(e)}")
 
     def _get_tar_stream(self, url, max_retries=3):
-     """Ottiene uno stream diretto al file tar.gz con meccanismo di riprova"""
+     """Obtain direct  stream from file tar.gz """
      for attempt in range(max_retries):
         try:
             download_url = self._get_download_url(url)
-            # Aumenta il timeout a 10 minuti (600 secondi)
+           
             response = self.session.get(download_url, stream=True, timeout=600)
             response.raise_for_status()
             
-            # Download con progress bar
+            # Download with progress bar
             total_size = int(response.headers.get('content-length', 0))
             block_size = 1024 * 1024  # 1MB
             progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True)
@@ -68,7 +68,7 @@ class FigShareLoader:
             progress_bar.close()
             
             if len(content) != total_size:
-                raise RuntimeError(f"Download incompleto: {len(content)}/{total_size} bytes")
+                raise RuntimeError(f"Download incomplete: {len(content)}/{total_size} bytes")
             
             # Verifica che non sia una pagina di errore HTML
             if len(content) < 1000 and b'<html' in content[:100].lower():
@@ -78,32 +78,32 @@ class FigShareLoader:
             
         except (requests.exceptions.RequestException, IOError) as e:
             if attempt == max_retries - 1:
-                raise RuntimeError(f"Errore nel download dopo {max_retries} tentativi: {str(e)}")
-            print(f"Tentativo {attempt + 1} fallito, riprovo...")
+                raise RuntimeError(f"Errore during download after  {max_retries} attemps: {str(e)}")
+            
             time.sleep(5 * (attempt + 1))  # Backoff esponenziale
 
     def _extract_file_from_tar(self, tar_stream, filename_pattern):
-        """Estrae un file specifico dall'archivio tar.gz"""
+        """Pull up a specific file from   tar.gz store"""
         try:
             tar_stream.seek(0)
             
-            # Prova prima con compressione gzip
+           
             try:
                 with tarfile.open(fileobj=tar_stream, mode='r:gz') as tar:
                     return self._find_and_extract_file(tar, filename_pattern)
             except tarfile.TarError:
-                # Se fallisce, prova senza compressione
+               
                 tar_stream.seek(0)
                 with tarfile.open(fileobj=tar_stream, mode='r') as tar:
                     return self._find_and_extract_file(tar, filename_pattern)
                     
         except tarfile.TarError as e:
-            raise RuntimeError(f"Errore nell'estrazione del tar: {str(e)}")
+            raise RuntimeError(f"Errore during pull up del tar: {str(e)}")
         except Exception as e:
-            raise RuntimeError(f"Errore generico nell'estrazione: {str(e)}")
+            raise RuntimeError(f"Generic error during pulling up : {str(e)}")
     
     def _find_and_extract_file(self, tar, filename_pattern):
-        """Trova ed estrae un file dal tar"""
+        """Find and pull up  file dal tar"""
         
         file_found = None
         
@@ -114,7 +114,7 @@ class FigShareLoader:
                 break
         
         if file_found is None:
-            raise FileNotFoundError(f"Nessun file corrisponde a '{filename_pattern}'")
+            raise FileNotFoundError(f"Noone file correspond  at '{filename_pattern}'")
         
         
         with tar.extractfile(file_found) as file_obj:
@@ -133,7 +133,7 @@ class FigShareLoader:
 
    # remote_data.py (modifiche alla funzione _parse_features)
     def _parse_features(self, content, pdb_id=None):
-     """Converte il contenuto del file in array numpy"""
+     """Convert the file content  in array numpy"""
   
      data = []
      lines_processed = 0
@@ -149,12 +149,12 @@ class FigShareLoader:
             if len(parts) < 2:
                 continue
                 
-            # Estrai etichetta (converti in 0/1)
+            # Pull up of labels ( in 0/1)
             label = float(parts[0])
             binary_label = 1 if label == 1 else 0
             
-            # Estrai features (assicurati che siano 276 come nel paper)
-            features = np.zeros(276)  # 276 features come specificato nel paper
+            # Pull up  features
+            features = np.zeros(276)  
             
             for part in parts[1:]:
                 if ':' in part:
@@ -164,9 +164,9 @@ class FigShareLoader:
                     if 1 <= idx <= 276:
                         features[idx-1] = val
                     else:
-                        raise ValueError(f"Indice feature fuori range: {idx}")
+                        raise ValueError(f"Indice feature out of range: {idx}")
             
-            # Aggiungi alla lista dei dati
+            # Add of  data list
             data.append(np.concatenate([[binary_label], features]))
             lines_processed += 1
             
@@ -177,16 +177,16 @@ class FigShareLoader:
             continue
     
      if not data:
-        raise ValueError("Nessun dato valido trovato nel file")
+        raise ValueError("Noone  data find in the file")
     
      data_array = np.array(data)
     
-     # Verifica che ci siano entrambe le classi
+     # Verify that  are both classes
      unique_labels = np.unique(data_array[:, 0])
      if len(unique_labels) < 2:
-        raise ValueError(f"Solo una classe presente nel dataset: {unique_labels}")
+        raise ValueError(f"There are only one class in  dataset: {unique_labels}")
     
-    # Ritorna solo features e labels (come nel codice originale)
+    # Return only  features e labels 
      return data_array[:, 1:], data_array[:, 0]  # X, y
 
     def load_features(self, dataset_type, pdb_id=None, return_coords=False):
@@ -197,13 +197,13 @@ class FigShareLoader:
      
     
      try:
-        # 1. Ottieni lo stream del file tar.gz
+        # 1. Obtain the stream of  tar.gz file
         tar_stream = self._get_tar_stream(FIGSHARE_URLS[dataset_type])
         
-        # 2. Estrai il file specifico
+        # 2. Extract specific file  
         file_content = self._extract_file_from_tar(tar_stream, "_descriptors_N5.txt")
         
-        # 3. Processa i dati
+        # 3. Processes  data
         X, y = self._parse_features(file_content)
         
         if return_coords:
@@ -215,5 +215,5 @@ class FigShareLoader:
             
      except Exception as e:
         raise RuntimeError(f"Errore nel processamento: {str(e)}")
-# Istanza globale
+
 data_loader = FigShareLoader()

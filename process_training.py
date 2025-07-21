@@ -6,10 +6,10 @@ import os
 def process_training_set():
     """Processa il set di training usando dati remoti"""
     try:
-        # Carica i dati senza coordinate
+       #Upload data
         X_train, y_train = data_loader.load_features('training', return_coords=False)
         
-        # Salva i dati processati
+        # Save processed data 
         output_dir = os.path.join(PROCESSED_DATA_DIR, 'train')
         os.makedirs(output_dir, exist_ok=True)
         
