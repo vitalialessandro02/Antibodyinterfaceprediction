@@ -4,7 +4,7 @@ from config import PROCESSED_DATA_DIR
 import os
 
 def process_training_set():
-    """Processa il set di training usando dati remoti"""
+    """Process the training set using remote data"""
     try:
        #Upload data
         X_train, y_train = data_loader.load_features('training', return_coords=False)
@@ -19,7 +19,7 @@ def process_training_set():
         
         
     except Exception as e:
-        print(f"Errore durante il processing: {str(e)}")
+        print(f"Error durante il processing: {str(e)}")
         raise
 
 if __name__ == "__main__":

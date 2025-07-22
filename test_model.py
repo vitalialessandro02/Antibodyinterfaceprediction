@@ -1,4 +1,3 @@
-# test_model.py
 import os
 import numpy as np
 from joblib import load
@@ -19,13 +18,13 @@ plt.style.use('seaborn-v0_8')
 sns.set_palette('colorblind')
 
 def save_metrics(metrics, filename):
-    """Salva le metriche in un file"""
+    """Save evaluation metrics to a text file"""
     with open(os.path.join(RESULTS_DIR, filename), 'w') as f:
         for k, v in metrics.items():
             f.write(f"{k}: {v:.4f}\n")
 
 def plot_curves(y_true, y_score, set_name):
-    """Crea e salva le curve ROC, PR e le metriche al variare della soglia"""
+    """Generate and save ROC, PR curves and threshold-based metrics plots"""
     # ROC Curve
     fpr, tpr, _ = roc_curve(y_true, y_score)
     roc_auc = roc_auc_score(y_true, y_score)
@@ -53,7 +52,7 @@ def plot_curves(y_true, y_score, set_name):
     plt.savefig(os.path.join(RESULTS_DIR, f'pr_{set_name}.png'))
     plt.close()
     
-  
+    # Threshold analysis
     thresholds = np.linspace(min(y_score), max(y_score), 100)
     accuracies = []
     f1_scores = []
@@ -63,7 +62,7 @@ def plot_curves(y_true, y_score, set_name):
         accuracies.append(accuracy_score(y_true, y_pred))
         f1_scores.append(f1_score(y_true, y_pred))
     
-    # Grafic for Accuracy vs Threshold
+    # Accuracy vs Threshold plot
     plt.figure(figsize=(10, 8))
     plt.plot(thresholds, accuracies, label='Accuracy', color='blue')
     plt.axvline(x=OPTIMAL_THRESHOLD, color='red', linestyle='--', 
@@ -75,7 +74,7 @@ def plot_curves(y_true, y_score, set_name):
     plt.savefig(os.path.join(RESULTS_DIR, f'accuracy_vs_threshold_{set_name}.png'))
     plt.close()
     
-    # Grafic for F1 Score vs Threshold
+    # F1 Score vs Threshold plot
     plt.figure(figsize=(10, 8))
     plt.plot(thresholds, f1_scores, label='F1 Score', color='green')
     plt.axvline(x=OPTIMAL_THRESHOLD, color='red', linestyle='--', 
@@ -88,12 +87,12 @@ def plot_curves(y_true, y_score, set_name):
     plt.close()
 
 def evaluate_model(model, X, y, set_name):
-    """evaluate the  modello and  apply  post-processing"""
-    # Calcolate the decision
+    """Evaluate model performance and apply post-processing"""
+    # Calculate model predictions
     y_score = model.decision_function(X)
     y_pred = (y_score >= OPTIMAL_THRESHOLD).astype(int)
     
-    # base metrics
+    # Compute evaluation metrics
     metrics = {
         'ROC AUC': roc_auc_score(y, y_score),
         'PR AUC': average_precision_score(y, y_score),
@@ -103,10 +102,11 @@ def evaluate_model(model, X, y, set_name):
         'F1 Score': f1_score(y, y_pred)
     }
     
-    # Save the   curve
+    # Generate and save evaluation plots
     plot_curves(y, y_score, set_name)
     save_metrics(metrics, f'metrics_{set_name}.txt')
     
+    # Print results
     print(f"\nPerformance on  {set_name} set:")
     print("="*50)
     for name, value in metrics.items():
@@ -115,39 +115,39 @@ def evaluate_model(model, X, y, set_name):
     return metrics
 
 def test_model():
-    """Testing   modello on development and testing  set """
+    """Main function to evaluate model on devolopment and test sets """
     try:
-        # Upload the method
+        # Load trained model
         model_path = os.path.join(MODEL_DIR, 'trained_svm_model.joblib')
         if not os.path.exists(model_path):
-            raise FileNotFoundError(f"Modello not found in {model_path}")
+            raise FileNotFoundError(f"Model not found at {model_path}")
         
         svm = load(model_path)
         
-       
+       # Evaluate on devolopment set
         try:
-            print("\nValutation of developmnet   set ...")
+            print("\nEvaluating developmnet set ...")
             X_dev, y_dev = data_loader.load_features('development')
             evaluate_model(svm, X_dev, y_dev, "development")
         except Exception as e:
-            print(f"\nWarning : impossibile evaluate on development set : {e}")
+            print(f"\nWarning : Could not evaluate devolopment set - {e}")
         
-        # With more 3 attemps
+        # Evaluate on test set with retry logic
         max_attempts = 3
         for attempt in range(max_attempts):
             try:
-                print(f"\nAttemps {attempt + 1} on {max_attempts} - Evaluete on test set...")
+                print(f"\n - Evaluating test set...")
                 X_test, y_test = data_loader.load_features('test')
                 evaluate_model(svm, X_test, y_test, "test")
                 break
             except Exception as e:
                 if attempt == max_attempts - 1:
                     raise
-                print(f"Faulty attemps: {e}\nRitry...")
+                print(f"Attempt failed: {e}\nRetrying...")
                 time.sleep(5 * (attempt + 1))
                 
     except Exception as e:
-        print(f"\nCritic ERROR  during testing: {str(e)}")
+        print(f"\nCritical error during testing: {str(e)}")
         raise
 
 if __name__ == "__main__":

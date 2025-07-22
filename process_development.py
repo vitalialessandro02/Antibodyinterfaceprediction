@@ -17,7 +17,7 @@ def process_development_set():
         np.save(os.path.join(output_dir, 'labels.npy'), y_dev)
         
     except Exception as e:
-        print(f"Errore during processes: {str(e)}")
+        print(f"Error during processes: {str(e)}")
 
 if __name__ == "__main__":
     process_development_set()
