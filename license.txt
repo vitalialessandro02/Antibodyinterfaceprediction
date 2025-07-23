@@ -1,6 +1,6 @@
-Copyright (c) 2025 Vitali Alessandro. All rights reserved.
+Copyright (c) 2025 Vitali Alessandro and Gezzi Lorenzo. All rights reserved.
 
-This software and its contents are the intellectual property of Vitali Alessandro.
+This software and its contents are the intellectual property of Vitali Alessandro and Gezzi Lorenzo.
 
 Unauthorized copying, distribution, modification, publication, or any other use
 of this software, in whole or in part, without the prior written consent of the author
@@ -9,4 +9,4 @@ is strictly prohibited and may result in legal action.
 This software is provided "as is" without warranty of any kind, either express or implied,
 including but not limited to the implied warranties of merchantability and fitness for a particular purpose.
 
-Contact the author at alessandr.vitali@studenti.unicam.it for licensing inquiries or permissions.
+Contact the authors at alessandr.vitali@studenti.unicam.it and lorenzo.gezzi@studenti.unicam.it for licensing inquiries or permissions.
