@@ -1,7 +1,8 @@
 import os
 
-# Project base directory
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# Project base directory - ora punta alla directory del progetto stesso
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Modificato per usare la directory corrente
 
 # Dataset URLs from FigShare
 FIGSHARE_URLS = {
@@ -18,9 +19,11 @@ MODEL_DIR = os.path.join(BASE_DIR, 'models')
 PDB_DIR = os.path.join(BASE_DIR, 'data', 'pdb')
 RESULTS_DIR = os.path.join(BASE_DIR, 'results')
 
+
 # Create directories if they don't exist
 for directory in [CACHE_DIR, PROCESSED_DATA_DIR, MODEL_DIR, PDB_DIR, RESULTS_DIR]:
     os.makedirs(directory, exist_ok=True)
+
 
 # SVM Parameters optimized in the original paper
 SVM_PARAMS = {
