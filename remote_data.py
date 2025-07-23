@@ -6,7 +6,7 @@ import numpy as np
 from config import FIGSHARE_URLS, PHYSICOCHEMICAL_PROPERTIES
 from zernike_descriptors import compute_3dzd, map_properties_to_surface, extract_patch
 import os
-from tqdm import tqdm
+
 from time import sleep
 import time
 
@@ -55,20 +55,11 @@ class FigShareLoader:
             response = self.session.get(download_url, stream=True, timeout=600)
             response.raise_for_status()
             
-            # Download with progress bar
-            total_size = int(response.headers.get('content-length', 0))
-            block_size = 1024 * 1024  
-            progress_bar = tqdm(total=total_size, unit='iB', unit_scale=True)
-            
+            #Download 
             content = bytearray()
-            for data in response.iter_content(block_size):
-                progress_bar.update(len(data))
+            for data in response.iter_content(1024 * 1024):
                 content.extend(data)
-            progress_bar.close()
-            
-            if len(content) != total_size:
-                raise RuntimeError(f"Download incomplete: {len(content)}/{total_size} bytes")
-            
+
             # Check for HTML error pages
             if len(content) < 1000 and b'<html' in content[:100].lower():
                 raise ValueError("Server returned an HTML error page")
