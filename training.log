@@ -1,1 +1,6 @@
 [2025-07-23 10:21:14] INFO [training:104] Training completed in 0.88s
+[2025-07-29 11:04:30] INFO [training:40] MLP CV ROC-AUC: 0.9298 ± 0.0518
+[2025-07-29 11:04:44] INFO [training:45] MLP training completed in 14.19s
+[2025-07-29 11:11:48] ERROR [training:61] RF training error: cannot unpack non-iterable NoneType object
+[2025-07-29 11:13:05] ERROR [training:61] RF training error: cannot unpack non-iterable NoneType object
+[2025-07-29 11:15:52] INFO [training:36] RF CV ROC-AUC: 0.9745 ± 0.0146

@@ -3,8 +3,8 @@ import re
 import requests
 import tarfile
 import numpy as np
-from config import FIGSHARE_URLS, PHYSICOCHEMICAL_PROPERTIES
-from zernike_descriptors import compute_3dzd, map_properties_to_surface, extract_patch
+from config import FIGSHARE_URLS
+
 import os
 
 from time import sleep

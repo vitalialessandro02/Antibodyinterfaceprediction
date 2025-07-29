@@ -25,17 +25,39 @@ for directory in [CACHE_DIR, PROCESSED_DATA_DIR, MODEL_DIR, PDB_DIR, RESULTS_DIR
     os.makedirs(directory, exist_ok=True)
 
 
-# SVM Parameters optimized in the original paper
-SVM_PARAMS = {
-    'C': 540.2,           # Optimal regularization parameter
-    'kernel': 'rbf',      # Radial basis function kernel
-    'gamma': 7.983e-3,    # Kernel coefficient
-    'class_weight': 'balanced',
-    'probability': True,  # Needed for ROC/PR curves
-    'max_iter': 10000,    # Maximum iterations for convergence
-    'verbose': True,
-    'random_state': 42    # Random seed for reproducibility
+# Aggiungi queste configurazioni alla fine di config.py
+
+# MLP Parameters
+MLP_PARAMS = {
+    'hidden_layer_sizes': (512, 256, 128, 64),
+    'activation': 'relu',
+    'solver': 'adam',
+    'alpha': 0.0001,
+    'batch_size': 256,
+    'learning_rate': 'adaptive',
+    'max_iter': 500,
+    'early_stopping': True,
+    'validation_fraction': 0.1,
+    'random_state': 42
 }
+
+# Random Forest Parameters
+RF_PARAMS = {
+    'n_estimators': 500,
+    'criterion': 'gini',
+    'max_depth': None,
+    'min_samples_split': 2,
+    'min_samples_leaf': 1,
+    'max_features': 'sqrt',
+    'bootstrap': True,
+    'class_weight': 'balanced',
+    'random_state': 42,
+    'n_jobs': -1
+}
+
+
+
+
 
 # Feature extraction parameters
 PATCH_RADIUS = 6.0        # Patch size in Angstrom
@@ -62,7 +84,20 @@ PHYSICOCHEMICAL_PROPERTIES = [
 
 # Sampling parameters for positive/negative examples
 NON_INTERFACE_SAMPLING_DISTANCE = 1.8 
-INTERFACE_SAMPLING_DISTANCE = 1.0      
+INTERFACE_SAMPLING_DISTANCE = 1.0
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 # Logging configuration
 LOGGING = {
