@@ -16,11 +16,7 @@ def process_test_set():
         # Save processed data as numpy files
         np.save(os.path.join(output_dir, 'X_test.npy'), X_test)
         np.save(os.path.join(output_dir, 'y_test.npy'), y_test)
-        
-        
-       
-        
-        
+
     except Exception as e:
         print(f"Processing error: {e}")
         raise

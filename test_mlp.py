@@ -3,7 +3,7 @@ import numpy as np
 from joblib import load
 from sklearn.metrics import (roc_auc_score, average_precision_score, 
                            precision_score, recall_score, f1_score, 
-                           accuracy_score, confusion_matrix)
+                           accuracy_score)
 from sklearn.metrics import roc_curve, precision_recall_curve
 from config import MODEL_DIR, OPTIMAL_THRESHOLD, RESULTS_DIR
 import matplotlib.pyplot as plt
@@ -40,10 +40,6 @@ def evaluate_mlp(model, X, y, set_name):
     
     return metrics
 
-
-
-
-
 def save_metrics(metrics, filename):
     """Save evaluation metrics to a text file"""
     with open(os.path.join(RESULTS_DIR, filename), 'w') as f:
@@ -63,7 +59,7 @@ def plot_curves(y_true, y_score, set_name):
     plt.ylabel('True Positive Rate')
     plt.title(f'ROC Curve - {set_name}')
     plt.legend()
-    plt.savefig(os.path.join(RESULTS_DIR, f'roc_{set_name}.png'))
+    plt.savefig(os.path.join(RESULTS_DIR, f' MLP_roc_{set_name}.png'))
     plt.close()
     
     # PR Curve
@@ -76,7 +72,7 @@ def plot_curves(y_true, y_score, set_name):
     plt.ylabel('Precision')
     plt.title(f'PR Curve - {set_name}')
     plt.legend()
-    plt.savefig(os.path.join(RESULTS_DIR, f'pr_{set_name}.png'))
+    plt.savefig(os.path.join(RESULTS_DIR, f'MLP_pr_{set_name}.png'))
     plt.close()
     
     # Threshold analysis
@@ -98,7 +94,7 @@ def plot_curves(y_true, y_score, set_name):
     plt.ylabel('Accuracy')
     plt.title(f'Accuracy vs Decision Threshold - {set_name}')
     plt.legend()
-    plt.savefig(os.path.join(RESULTS_DIR, f'accuracy_vs_threshold_{set_name}.png'))
+    plt.savefig(os.path.join(RESULTS_DIR, f'MLP_accuracy_vs_threshold_{set_name}.png'))
     plt.close()
     
     # F1 Score vs Threshold plot
@@ -110,10 +106,8 @@ def plot_curves(y_true, y_score, set_name):
     plt.ylabel('F1 Score')
     plt.title(f'F1 Score vs Decision Threshold - {set_name}')
     plt.legend()
-    plt.savefig(os.path.join(RESULTS_DIR, f'f1_vs_threshold_{set_name}.png'))
+    plt.savefig(os.path.join(RESULTS_DIR, f'MLP_f1_vs_threshold_{set_name}.png'))
     plt.close()
-
-
 
 def test_mlp():
     """Main function to evaluate MLP on development and test sets"""

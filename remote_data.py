@@ -4,9 +4,7 @@ import requests
 import tarfile
 import numpy as np
 from config import FIGSHARE_URLS
-
 import os
-
 from time import sleep
 import time
 
@@ -31,7 +29,6 @@ class FigShareLoader:
             
             direct_url = f"https://ndownloader.figshare.com/files/{file_id}"
            
-            
             # Validate the URL
             try:
                 head_response = self.session.head(direct_url, timeout=10)
@@ -77,7 +74,6 @@ class FigShareLoader:
         try:
             tar_stream.seek(0)
             
-           
             try:
                 with tarfile.open(fileobj=tar_stream, mode='r:gz') as tar:
                     return self._find_and_extract_file(tar, filename_pattern)
@@ -105,7 +101,6 @@ class FigShareLoader:
         
         if file_found is None:
             raise FileNotFoundError(f"No file correspond  at '{filename_pattern}'")
-        
         
         with tar.extractfile(file_found) as file_obj:
             content = file_obj.read()
@@ -183,8 +178,6 @@ class FigShareLoader:
      """Method to load features from FigShare"""
      if dataset_type not in FIGSHARE_URLS:
         raise ValueError(f"Invalid dataset type. Choose from: {list(FIGSHARE_URLS.keys())}")
-    
-     
     
      try:
         # 1. Download the tar.gz file

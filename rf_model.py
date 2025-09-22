@@ -9,10 +9,7 @@ from joblib import dump
 from config import (PROCESSED_DATA_DIR, MODEL_DIR, RF_PARAMS, LOGGING, 
                    OPTIMAL_THRESHOLD, RESULTS_DIR)
 import matplotlib.pyplot as plt
-from sklearn.metrics import (roc_auc_score, average_precision_score, 
-                           precision_score, recall_score, f1_score, 
-                           accuracy_score, confusion_matrix, 
-                           roc_curve, precision_recall_curve)
+
 
 logging.config.dictConfig(LOGGING)
 logger = logging.getLogger('training')
@@ -23,17 +20,7 @@ def train_rf():
         
         X_train, y_train = load_processed_data()
         rf = RandomForestClassifier(**RF_PARAMS)
-        cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
-        
-        # Cross-validation
-        cv_scores = cross_val_score(
-            rf, X_train, y_train, 
-            cv=cv, 
-            scoring='roc_auc',
-            n_jobs=-1
-        )
-        
-        
+       
         
         # Feature importance
         rf.fit(X_train, y_train)
@@ -89,7 +76,6 @@ def load_processed_data():
     except Exception as e:
         logger.error(f"Data loading error: {str(e)}")
         raise
-
 
 if __name__ == "__main__":
     train_rf()

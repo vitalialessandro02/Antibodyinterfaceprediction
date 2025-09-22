@@ -1,8 +1,8 @@
 import os
 
 
-# Project base directory - ora punta alla directory del progetto stesso
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))  # Modificato per usare la directory corrente
+# Project base directory 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__)) 
 
 # Dataset URLs from FigShare
 FIGSHARE_URLS = {
@@ -19,13 +19,11 @@ MODEL_DIR = os.path.join(BASE_DIR, 'models')
 PDB_DIR = os.path.join(BASE_DIR, 'data', 'pdb')
 RESULTS_DIR = os.path.join(BASE_DIR, 'results')
 
-
-# Create directories if they don't exist
 for directory in [CACHE_DIR, PROCESSED_DATA_DIR, MODEL_DIR, PDB_DIR, RESULTS_DIR]:
     os.makedirs(directory, exist_ok=True)
 
 
-# Aggiungi queste configurazioni alla fine di config.py
+
 
 # MLP Parameters
 MLP_PARAMS = {
@@ -56,44 +54,7 @@ RF_PARAMS = {
 }
 
 
-
-
-
-# Feature extraction parameters
-PATCH_RADIUS = 6.0        # Patch size in Angstrom
-INTERFACE_DISTANCE = 4.5  # Distance threshold for interface residues 
 OPTIMAL_THRESHOLD = 0.6232 
-IF_CONTAMINATION = 0.18   # Parameter for Isolation Forest
-
-# Resolution parameters
-VOXEL_RESOLUTION = 64     
-SOLVENT_PROBE_RADIUS = 1.4  
-
-# 3D Zernike parameters
-ZERNIKE_ORDER = 5         # Maximum order of descriptors
-ZERNIKE_DIMENSION = 12    # Number of descriptors per function (for order=5)
-
-# Selected physicochemical properties from AAindex
-PHYSICOCHEMICAL_PROPERTIES = [
-    'BIOV880101', 'CHAM820101', 'CHAM820102', 'CHOC760101', 
-    'EISD840101', 'FASG760101', 'FASG760102', 'FASG760103',
-    'FASG760104', 'FASG760105', 'GRAR740102', 'JANJ780101',
-    'JANJ780102', 'JANJ780103', 'KARP850101', 'KARP850102',
-    'KARP850103', 'LEVM780101', 'LEVM780102', 'LEVM780103'
-]
-
-# Sampling parameters for positive/negative examples
-NON_INTERFACE_SAMPLING_DISTANCE = 1.8 
-INTERFACE_SAMPLING_DISTANCE = 1.0
-
-
-
-
-
-
-
-
-
 
 
 

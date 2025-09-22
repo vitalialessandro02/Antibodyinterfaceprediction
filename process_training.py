@@ -15,9 +15,7 @@ def process_training_set():
         
         np.save(os.path.join(output_dir, 'features.npy'), X_train)
         np.save(os.path.join(output_dir, 'labels.npy'), y_train)
-        
-        
-        
+    
     except Exception as e:
         print(f"Error durante il processing: {str(e)}")
         raise
